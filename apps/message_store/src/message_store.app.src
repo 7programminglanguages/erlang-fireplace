@@ -1,0 +1,15 @@
+{application, message_store,
+ [{description, "An OTP application"},
+  {vsn, git},
+  {registered, []},
+  {mod, { message_store_app, []}},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, []},
+  {links, []}
+ ]}.

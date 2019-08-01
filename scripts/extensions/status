@@ -1,0 +1,22 @@
+#!/bin/bash
+
+case $1 in
+    help)
+        echo "bin/fireplace status"
+        ;;
+    *)
+        ;;
+esac
+
+Status=$(relx_nodetool eval "lists:keyfind(xsync,1,application:which_applications()).")
+
+code="case $Status of
+          {_, _, Vsn} ->
+		io:format(\"~p~n\",[{ok,Vsn}]);
+          _ ->
+		io:format(\"Fireplace is not running!~n\", [])
+      end,
+      halt()."
+echo $(erl -boot no_dot_erlang -sasl errlog_type error -noshell -eval "$code")
+
+

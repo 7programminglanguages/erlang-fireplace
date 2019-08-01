@@ -1,0 +1,18 @@
+{application, xsync,
+ [{description, "An OTP application"},
+  {vsn, git},
+  {registered, []},
+  {mod, { xsync_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    kafka_pool,
+    redis_pool,
+    thrift_pool
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, []},
+  {links, []}
+ ]}.

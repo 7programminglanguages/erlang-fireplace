@@ -1,0 +1,138 @@
+%% -*- mode: erlang;erlang-indent-level: 4;indent-tabs-mode: nil -*-
+%% ex: ft=erlang ts=4 sw=4 et
+{ok, Cwd} = file:get_cwd(),
+LibDir = filename:join(Cwd, "_build/default/lib"),
+SysConfigFileByHost = "config/sys.config." ++ net_adm:localhost(),
+SysConfigFile = case filelib:is_regular(SysConfigFileByHost) of
+                     true -> SysConfigFileByHost;
+                     false -> "config/sys.config"
+                end,
+ case os:getenv("HIPE") of
+     "1" ->
+         HipeCfg = [native],
+         HipeOverrides = [{add, [{erl_opts, [native]}]},
+                          {del, snappyer, [{erl_opts, [native]}]},
+                          {del, crc32cer, [{erl_opts, [native]}]},
+                          {del, eredis, [{erl_opts, [native]}]}];
+     _ ->
+         HipeCfg = [],
+         HipeOverrides = []
+ end,
+[
+ {deps,[
+        ranch,
+        lager,
+        {ticktick,{git, "git@gitlab.zidanduanxin.top:entropy/ticktick.git", {branch,"master"}}},
+        jsx,
+        mochiweb,
+        brod,
+        jiffy,
+        eredis,
+        p1_mysql,
+        poolboy,
+        gproc,
+        cowboy,
+        {cuesport, {git, "git@gitlab.zidanduanxin.top:entropy/cuesport.git", {branch, "master"}}},
+        {thrift, {git, "git@gitlab.zidanduanxin.top:entropy/thrift-erlang.git", {branch, "master"}}},
+        recon,
+        {socketio, {git, "git@gitlab.zidanduanxin.top:entropy/socket.io-cowboy.git", {branch, "master"}}},
+        p1_utils,
+        jwt,
+        erlzk,
+        prometheus
+       ]},
+ {erl_opts, [
+             debug_info,
+             {i, filename:join(Cwd, "apps/xsync_proto/include")},
+             {i, filename:join(Cwd,"include")},
+             {i, filename:join(Cwd, "apps/thrift_pool/src/gen-erl")},
+             {i, filename:join(Cwd, "_build/default/plugins/gpb/include")},
+             {i, filename:join(LibDir, "brod/include")}
+            ] ++ HipeCfg
+},
+
+ {relx, [{release, { fireplace, "1.0.0" },
+          [fireplace_config, %% must first start
+           lager,
+           erlzk,
+           p1_mysql,
+           odbc_pool,
+           message_store,
+           thrift_pool,
+           redis_pool,
+           kafka_pool,
+           prometheus,
+           ranch,
+           ticktick,
+           brod,
+           socketio,
+           cowboy,
+           {xsync_proto,load},
+           {jwt, load},
+           {jiffy, load},
+           {jsx, load},
+           {eredis, load},
+           {thrift, load},
+           {poolboy, load},
+           {mochiweb, load},
+           {gproc, load},
+           {cuesport,load},
+           {p1_utils, load},
+           {recon, load},
+           fireplace_plugins,
+           xsync,
+           inets,
+           sasl],
+          [{overlay,
+            [
+             {copy, "scripts/extensions", "bin/extensions"},
+             {mkdir, "log/sasl"},
+             {copy, "{{output_dir}}/bin/start_clean.boot", "bin/start.boot"},
+             {copy, "{{output_dir}}/releases/{{release_version}}/fireplace.boot",
+              "{{output_dir}}/releases/{{release_version}}/start.boot"},
+             {copy, SysConfigFile, "etc/app.config"},
+             {copy, "config/vm.args", "etc/vm.args"},
+             {copy, "scripts/fireplace", "bin/fireplace"}
+            ]}]
+         },
+
+         {release, {xsync_client, "1.0.0"},
+          [xsync_client,
+           lager,
+           public_key,
+           crypto,
+           {xsync_proto, load}
+          ],
+          [{vm_args, "./config/vm.args.xsync_client"},
+           {sys_config, "./config/sys.config.xsync_client"},
+           {dev_mode, false}]},
+
+         {sys_config, SysConfigFile},
+         {vm_args, "./config/vm.args"},
+
+         {dev_mode, true},
+         {include_erts, false},
+         {include_src, false},
+         {extended_start_script, true}
+        ]
+ },
+
+ {overrides, [] ++ HipeOverrides},
+
+ {profiles, [{prod, [{overrides, [{del, [{erl_opts, [debug_info]}]},
+                                  {add, [{erl_opts, [no_debug_info]}]}]},
+                     {relx, [{dev_mode, false},
+                             {include_erts, true}]}]
+             }]
+ },
+ {dist_node, [
+              {setcookie, 'fireplace'},
+              {sname, 'fireplace'}
+             ]},
+ {minimum_otp_vsn, "20"},
+ {pre_hooks,
+  []},
+ {post_hooks,
+
+  []}
+].

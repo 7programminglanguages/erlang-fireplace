@@ -1,0 +1,16 @@
+{application, kafka_pool,
+ [{description, "An OTP application"},
+  {vsn, git},
+  {registered, []},
+  {mod, { kafka_pool_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    brod
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, []},
+  {links, []}
+ ]}.

@@ -1,0 +1,16 @@
+{application, fireplace_config,
+ [{description, "An OTP application"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, { fireplace_config_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    erlzk
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, []},
+  {links, []}
+ ]}.

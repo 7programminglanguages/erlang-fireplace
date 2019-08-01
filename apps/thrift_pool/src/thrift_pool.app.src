@@ -1,0 +1,15 @@
+{application, thrift_pool,
+ [{description, "An OTP application"},
+  {vsn, git},
+  {registered, []},
+  {mod, { thrift_pool_app, []}},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, []},
+  {links, []}
+ ]}.

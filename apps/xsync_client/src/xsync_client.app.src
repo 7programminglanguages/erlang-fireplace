@@ -1,0 +1,16 @@
+{application, xsync_client,
+ [{description, "An OTP application"},
+  {vsn, git},
+  {registered, []},
+  {mod, { xsync_client_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    xsync_proto
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, []},
+  {links, []}
+ ]}.

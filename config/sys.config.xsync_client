@@ -1,0 +1,40 @@
+%% -*- mode: erlang;erlang-indent-level: 4;indent-tabs-mode: nil -*-
+%% ex: ft=erlang ts=4 sw=4 et
+
+[
+ {xsync_proto,
+  [
+   {public_keys, [
+                  <<"-----BEGIN PUBLIC KEY-----\n"
+                    "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDRvNdDYgjQb2r1Sp3xN5pHuKi2\n"
+                    "9dz4KNfBu1UDs1Gv+qJK2pf/GSuHmtsxckGwXwa/yCbizPmnXC8UrOsPyT3OKsEg\n"
+                    "YyXOKrxOw43Ik5kLK5VDFgRe67dXCZpH4EdgOdlvV4Nru89Jzsd52xEGSvg8oYKR\n"
+                    "ws83pAISR+ePbQr2WQIDAQAB\n"
+                    "-----END PUBLIC KEY-----\n">>
+                 ]}
+  ]},
+ {lager,
+  [
+   {log_root, "log"},
+   {error_logger_hwm, 1000},
+   {handlers, [
+               {lager_console_backend,
+                [{level, debug},
+                 {formatter, lager_default_formatter},
+                 {formatter_config, [date," ",time," [",severity,"] ",pid,"@",
+                                     module,":",function,":",line," ",message,"\r\n"]}
+                ]},
+               {lager_file_backend,[{file, "info.log"},
+                                    {level, debug},
+                                    {size, 209715200},
+                                    {count, 200},
+                                    {high_water_mark, 5000},
+                                    {sync_on, critical}]},
+               {lager_file_backend,[{file, "error.log"},
+                                    {level, error},
+                                    {count, 200},
+                                    {high_water_mark, 1000},
+                                    {sync_on, critical}]}
+              ]}
+  ]}
+].
